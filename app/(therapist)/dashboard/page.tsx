@@ -13,23 +13,33 @@ const supabase = createClient(
 
 export default function TherapistDashboard() {
   const [pendingBookings, setPendingBookings] = useState<any[]>([]);
+  const [confirmedSessions, setConfirmedSessions] = useState<any[]>([]);
   const [currentMonth, setCurrentMonth] = useState(new Date(2026, 2, 1)); // Marzo 2026
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
-    loadPendingBookings();
+    loadDashboardData();
   }, []);
 
-  const loadPendingBookings = async () => {
+  const loadDashboardData = async () => {
     const { data: { user } } = await supabase.auth.getUser();
-    const { data } = await supabase
+
+    const { data: pending } = await supabase
       .from('sessions')
       .select('*, patient:profiles(full_name)')
       .eq('therapist_id', user?.id)
       .eq('status', 'pending_therapist_confirmation');
 
-    setPendingBookings(data || []);
+    setPendingBookings(pending || []);
+
+    const { data: confirmed } = await supabase
+      .from('sessions')
+      .select('*, patient:profiles(full_name)')
+      .eq('therapist_id', user?.id)
+      .eq('status', 'confirmed');
+
+    setConfirmedSessions(confirmed || []);
   };
 
   const confirmBooking = async (sessionId: string) => {
@@ -37,14 +47,17 @@ export default function TherapistDashboard() {
       .from('sessions')
       .update({ status: 'confirmed' })
       .eq('id', sessionId);
-
-    loadPendingBookings();
+    loadDashboardData();
   };
 
-  const toggleAvailability = (day: number) => {
+  const toggleDayAvailability = (day: number) => {
     const dateStr = `2026-03-${day.toString().padStart(2, '0')}`;
-    setSelectedDate(selectedDate === dateStr ? null : dateStr);
-    alert(`Disponibilità impostata per il ${day} marzo 2026\n(Prossimo step: form per inserire orari)`);
+    if (selectedDate === dateStr) {
+      setSelectedDate(null);
+    } else {
+      setSelectedDate(dateStr);
+      alert(`📅 Disponibilità attivata per il ${day} marzo 2026\n\nOra puoi impostare gli orari (prossimo step)`);
+    }
   };
 
   return (
@@ -55,32 +68,34 @@ export default function TherapistDashboard() {
             <h1 className="text-4xl font-medium">Ciao, Dott.ssa Rossi 👋</h1>
             <p className="text-[#64748B]">Dashboard Terapeuta • Zen Mind</p>
           </div>
-          <Button className="bg-[#14B8A6]" onClick={() => router.push('/profile')}>Modifica Profilo e Disponibilità</Button>
+          <Button className="bg-[#14B8A6]" onClick={() => router.push('/profile')}>Modifica Profilo</Button>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Calendario Interattivo */}
           <div className="lg:col-span-7 bg-[#1E2937] rounded-3xl p-8">
-            <div className="flex justify-between mb-8">
+            <div className="flex justify-between items-center mb-8">
               <h2 className="text-2xl font-medium flex items-center gap-3">
                 <CalendarIcon className="text-[#14B8A6]" /> Marzo 2026
               </h2>
-              <Button variant="outline">Gestisci orario settimanale</Button>
+              <Button variant="outline" onClick={() => alert("Gestione orario settimanale in arrivo")}>
+                Gestisci orario settimanale
+              </Button>
             </div>
 
             <div className="grid grid-cols-7 gap-3 text-center">
               {['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'].map((d) => (
-                <div key={d} className="text-xs text-[#64748B] py-2 font-medium">{d}</div>
+                <div key={d} className="text-xs text-[#64748B] py-3 font-medium">{d}</div>
               ))}
 
               {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => (
                 <div
                   key={day}
-                  onClick={() => toggleAvailability(day)}
-                  className={`aspect-square flex items-center justify-center rounded-2xl text-lg font-medium cursor-pointer transition-all hover:bg-[#14B8A6]/20
+                  onClick={() => toggleDayAvailability(day)}
+                  className={`aspect-square flex items-center justify-center rounded-2xl text-lg font-medium cursor-pointer transition-all hover:bg-[#14B8A6]/20 border border-transparent
                     ${selectedDate === `2026-03-${day.toString().padStart(2, '0')}`
-                      ? 'bg-[#14B8A6] text-black scale-110'
-                      : 'bg-[#0F172A] hover:bg-[#1E2937]'}`}
+                      ? 'bg-[#14B8A6] text-black border-[#14B8A6]'
+                      : 'bg-[#0F172A] hover:border-[#14B8A6]/50'}`}
                 >
                   {day}
                 </div>
@@ -88,7 +103,7 @@ export default function TherapistDashboard() {
             </div>
 
             <p className="text-center text-xs text-gray-400 mt-8">
-              Clicca sui giorni per impostare le tue disponibilità orarie
+              Clicca sui giorni per impostare le tue fasce orarie disponibili
             </p>
           </div>
 
@@ -100,7 +115,7 @@ export default function TherapistDashboard() {
 
             {pendingBookings.length === 0 ? (
               <div className="text-center py-16 text-gray-400">
-                Nessuna prenotazione in attesa di conferma
+                Nessuna prenotazione in attesa
               </div>
             ) : (
               <div className="space-y-5">
