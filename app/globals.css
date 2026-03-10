@@ -24,3 +24,36 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+@layer base {
+  :root {
+    --background: #0A0F1C;
+    --foreground: #F8FAFC;
+    --card: #1E2937;
+    --primary: #14B8A6;
+    --primary-foreground: #0A0F1C;
+  }
+}
+
+body {
+  font-family: 'Geist Sans', system-ui, sans-serif;
+  background: #0A0F1C;
+  color: #F8FAFC;
+}
+
+.card {
+  background: #1E2937;
+  border-radius: 24px;
+  box-shadow: 0 10px 30px -10px rgb(20 184 166 / 0.15);
+}
+
+.button-primary {
+  background: #14B8A6;
+  color: #0A0F1C;
+  transition: all 0.2s ease;
+}
+
+.button-primary:hover {
+  background: #0F766E;
+  transform: translateY(-1px);
+}
