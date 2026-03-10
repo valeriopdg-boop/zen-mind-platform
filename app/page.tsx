@@ -18,11 +18,8 @@ export default function HomePage() {
       const { error } = await supabase.auth.signInAnonymously();
       if (error) throw error;
     } catch (e: any) {
-      console.error('Auth error:', e);
-      const msg = e?.message ?? String(e);
-      if (msg.includes('fetch') || msg.includes('Anonymous') || msg.includes('network')) {
-        alert('Auth non disponibile. Verifica .env e Supabase → Auth → abilita "Anonymous sign-ins".');
-      }
+      console.warn('Auth fallback:', e?.message ?? e);
+      // Naviga comunque (modalità demo senza Supabase)
     }
     router.push('/test');
   };
@@ -32,11 +29,7 @@ export default function HomePage() {
       const { error } = await supabase.auth.signInAnonymously();
       if (error) throw error;
     } catch (e: any) {
-      console.error('Auth error:', e);
-      const msg = e?.message ?? String(e);
-      if (msg.includes('fetch') || msg.includes('Anonymous') || msg.includes('network')) {
-        alert('Auth non disponibile. Verifica .env e Supabase → Auth → abilita "Anonymous sign-ins".');
-      }
+      console.warn('Auth fallback:', e?.message ?? e);
     }
     router.push('/dashboard');
   };
