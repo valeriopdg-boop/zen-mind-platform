@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-03-01.stable',
+  apiVersion: '2025-02-24.stable',   // ← versione aggiornata corretta
 });
 
 const supabase = createClient(
@@ -15,21 +15,19 @@ export async function POST(request: Request) {
   try {
     const { sessionId, amount, therapistPrice } = await request.json();
 
-    // Crea il Payment Intent su Stripe
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: amount,                    // es. 6500 centesimi per 65€
+      amount: amount,
       currency: 'eur',
       metadata: {
         sessionId: sessionId,
         therapistPrice: therapistPrice,
-        platformFee: '1000'               // 10€
+        platformFee: '1000'
       },
       automatic_payment_methods: {
         enabled: true,
       },
     });
 
-    // Aggiorna la sessione con i dati del pagamento
     await supabase
       .from('sessions')
       .update({
