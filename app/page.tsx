@@ -28,9 +28,6 @@ export default function HomePage() {
           <h1 className="text-7xl font-medium leading-none mb-8 tracking-tighter">
             Trova il terapeuta<br />giusto per te.
           </h1>
-          <p className="text-2xl text-white/80 mb-12 max-w-2xl mx-auto">
-            10 domande scientifiche • Matching al 90%+ • Solo 10€ di commissione
-          </p>
           <Button
             onClick={() => router.push('/login')}
             className="button-primary text-2xl px-16 py-8 rounded-3xl font-medium shadow-2xl shadow-[#14B8A6]/30"
@@ -56,7 +53,7 @@ export default function HomePage() {
               <Users className="w-12 h-12 text-[#14B8A6]" />
             </div>
             <h3 className="text-2xl font-medium mb-3">Trasparenza Totale</h3>
-            <p className="text-white/70">Paga solo il prezzo del terapeuta. Noi prendiamo sempre 10€.</p>
+            <p className="text-white/70">Paga solo il prezzo del terapeuta.</p>
           </div>
           <div className="text-center">
             <div className="w-20 h-20 mx-auto bg-[#14B8A6]/10 rounded-3xl flex items-center justify-center mb-6">
