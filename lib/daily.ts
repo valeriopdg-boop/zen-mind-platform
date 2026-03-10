@@ -1,11 +1,11 @@
 // lib/daily.ts
-const DAILY_API_KEY = process.env.DAILY_API_KEY!;
-
-if (!DAILY_API_KEY) {
-  throw new Error('DAILY_API_KEY non trovata in .env.local');
-}
+const DAILY_API_KEY = process.env.DAILY_API_KEY;
 
 export async function createDailyRoom(sessionId: string) {
+  if (!DAILY_API_KEY) {
+    throw new Error('DAILY_API_KEY non trovata in .env.local');
+  }
+
   const response = await fetch('https://api.daily.co/v1/rooms', {
     method: 'POST',
     headers: {
