@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
+import Stripe from 'stripe';
 
-async function getStripe() {
+export const dynamic = 'force-dynamic';
+
+function getStripe() {
   const key = process.env.STRIPE_SECRET_KEY;
   if (!key) throw new Error('STRIPE_SECRET_KEY non configurata');
-  const Stripe = (await import('stripe')).default;
   return new Stripe(key);
 }
 
@@ -15,7 +17,7 @@ export async function POST(request: NextRequest) {
     }
 
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? request.nextUrl.origin;
-    const stripe = await getStripe();
+    const stripe = getStripe();
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
