@@ -14,24 +14,13 @@ export default function HomePage() {
   const router = useRouter();
 
   const loginAsPatient = async () => {
-    try {
-      const { error } = await supabase.auth.signInAnonymously();
-      if (error) throw error;
-    } catch (e: any) {
-      console.warn('Auth fallback:', e?.message ?? e);
-      // Naviga comunque (modalità demo senza Supabase)
-    }
     router.push('/test');
+    supabase.auth.signInAnonymously().catch(() => {});
   };
 
   const loginAsTherapist = async () => {
-    try {
-      const { error } = await supabase.auth.signInAnonymously();
-      if (error) throw error;
-    } catch (e: any) {
-      console.warn('Auth fallback:', e?.message ?? e);
-    }
     router.push('/dashboard');
+    supabase.auth.signInAnonymously().catch(() => {});
   };
 
   return (
