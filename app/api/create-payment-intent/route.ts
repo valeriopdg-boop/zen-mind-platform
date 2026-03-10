@@ -15,27 +15,28 @@ export async function POST(request: Request) {
   try {
     const { sessionId, amount, therapistPrice } = await request.json();
 
-    // Crea Payment Intent
+    // Crea il Payment Intent su Stripe
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: amount,                    // es. 6500 per 65€
+      amount: amount,                    // es. 6500 centesimi per 65€
       currency: 'eur',
       metadata: {
         sessionId: sessionId,
         therapistPrice: therapistPrice,
-        platformFee: '10'
+        platformFee: '1000'               // 10€
       },
       automatic_payment_methods: {
         enabled: true,
       },
     });
 
-    // Aggiorna sessione con payment intent
+    // Aggiorna la sessione con i dati del pagamento
     await supabase
       .from('sessions')
       .update({
         payment_intent_id: paymentIntent.id,
         amount_paid: amount,
-        payment_status: 'pending'
+        payment_status: 'pending',
+        therapist_price: therapistPrice
       })
       .eq('id', sessionId);
 
@@ -45,7 +46,7 @@ export async function POST(request: Request) {
     });
 
   } catch (error: any) {
-    console.error(error);
+    console.error('Payment Intent Error:', error);
     return Response.json({ error: error.message }, { status: 500 });
   }
 }
