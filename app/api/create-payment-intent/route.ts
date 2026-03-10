@@ -2,18 +2,24 @@
 import { createClient } from '@supabase/supabase-js';
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+function getStripe() {
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (!key) throw new Error('STRIPE_SECRET_KEY non configurata');
+  return new Stripe(key);
+}
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabase() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) throw new Error('Supabase non configurato');
+  return createClient(url, key);
+}
 
 export async function POST(request: Request) {
   try {
     const { sessionId, amount, therapistPrice } = await request.json();
 
-    const paymentIntent = await stripe.paymentIntents.create({
+    const paymentIntent = await getStripe().paymentIntents.create({
       amount: amount,
       currency: 'eur',
       metadata: {
@@ -26,7 +32,7 @@ export async function POST(request: Request) {
       },
     });
 
-    await supabase
+    await getSupabase()
       .from('sessions')
       .update({
         payment_intent_id: paymentIntent.id,
