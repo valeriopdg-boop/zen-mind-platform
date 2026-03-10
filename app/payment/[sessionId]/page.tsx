@@ -1,12 +1,9 @@
 // app/payment/[sessionId]/page.tsx
 'use client';
 import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
 import { Button } from '@/components/ui/button';
-import { loadStripe } from '@stripe/stripe-js';
-
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -15,7 +12,6 @@ const supabase = createClient(
 
 export default function PaymentPage() {
   const { sessionId } = useParams<{ sessionId: string }>();
-  const router = useRouter();
   const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -39,12 +35,9 @@ export default function PaymentPage() {
   const handlePayment = async () => {
     if (!session) return;
 
-    const stripe = await stripePromise;
-    if (!stripe) return alert("Errore Stripe");
+    const totalAmount = session.therapist.hourly_rate * 100; // centesimi
 
-    const totalAmount = session.therapist.hourly_rate * 100; // in centesimi
-
-    const response = await fetch('/api/create-payment-intent', {
+    const response = await fetch('/api/create-checkout-session', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -54,13 +47,14 @@ export default function PaymentPage() {
       })
     });
 
-    const { clientSecret } = await response.json();
-
-    const { error } = await stripe.redirectToCheckout({
-      sessionId: clientSecret
-    });
-
-    if (error) alert(error.message);
+    const data = await response.json();
+    if (!response.ok) {
+      alert(data.error ?? 'Errore creazione pagamento');
+      return;
+    }
+    if (data.url) {
+      window.location.href = data.url;
+    }
   };
 
   if (loading || !session) {
