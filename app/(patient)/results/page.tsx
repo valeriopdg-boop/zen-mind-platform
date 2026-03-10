@@ -1,15 +1,8 @@
 // app/(patient)/results/page.tsx
 'use client';
 import { useEffect, useState } from 'react';
-import { createClient } from '@supabase/supabase-js';
-import { calculateCompatibility, getMatchReasons } from '@/lib/matching';
-import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+import { Button } from '@/components/ui/button';
 
 const fakeTherapists = [
   { id: '00000000-0000-0000-0000-000000000001', full_name: "Dott.ssa Elena Rossi", hourly_rate: 65 },
@@ -23,28 +16,15 @@ export default function ResultsPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const loadResults = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      const { data: test } = await supabase
-        .from('patient_tests')
-        .select('answers')
-        .eq('user_id', user?.id)
-        .order('completed_at', { ascending: false })
-        .limit(1)
-        .single();
+    // Simuliamo un risultato immediato per test
+    const scored = fakeTherapists.map(t => ({
+      ...t,
+      score: Math.floor(Math.random() * 20) + 80, // tra 80% e 99%
+      reasons: ["Alta compatibilità su ansia", "Stile empatico", "Tariffa allineata"]
+    }));
 
-      if (test) {
-        const scored = fakeTherapists.map(t => ({
-          ...t,
-          score: calculateCompatibility(test.answers, t),
-          reasons: getMatchReasons(test.answers, t)
-        })).sort((a, b) => b.score - a.score).slice(0, 3);
-
-        setMatches(scored);
-      }
-      setLoading(false);
-    };
-    loadResults();
+    setMatches(scored);
+    setLoading(false);
   }, []);
 
   const goToBooking = (therapistId: string) => {
@@ -52,7 +32,7 @@ export default function ResultsPage() {
   };
 
   if (loading) {
-    return <div className="min-h-screen bg-[#0A0F1C] flex items-center justify-center text-white text-2xl">Calcolo i tuoi match migliori...</div>;
+    return <div className="min-h-screen bg-[#0A0F1C] flex items-center justify-center text-white text-2xl">Calcolo i tuoi match...</div>;
   }
 
   return (
