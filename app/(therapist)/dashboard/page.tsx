@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Calendar as CalendarIcon, Clock } from 'lucide-react';
 
 const supabase = createClient(
@@ -16,6 +17,8 @@ export default function TherapistDashboard() {
   const [confirmedSessions, setConfirmedSessions] = useState<any[]>([]);
   const [currentMonth, setCurrentMonth] = useState(new Date(2026, 2, 1)); // Marzo 2026
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [showTimeModal, setShowTimeModal] = useState(false);
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState('');
   const router = useRouter();
 
   useEffect(() => {
@@ -52,7 +55,20 @@ export default function TherapistDashboard() {
 
   const toggleDay = (day: number) => {
     const dateStr = `2026-03-${day.toString().padStart(2, '0')}`;
-    setSelectedDate(selectedDate === dateStr ? null : dateStr);
+    if (selectedDate === dateStr) {
+      setSelectedDate(null);
+    } else {
+      setSelectedDate(dateStr);
+      setShowTimeModal(true);
+    }
+  };
+
+  const saveTimeSlot = () => {
+    if (selectedDate && selectedTimeSlot) {
+      alert(`✅ Disponibilità impostata per ${selectedDate} alle ${selectedTimeSlot}`);
+      setShowTimeModal(false);
+      setSelectedTimeSlot('');
+    }
   };
 
   return (
@@ -67,7 +83,7 @@ export default function TherapistDashboard() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* Calendario Interattivo Avanzato */}
+          {/* Calendario Interattivo */}
           <div className="lg:col-span-7 bg-[#1E2937] rounded-3xl p-8">
             <div className="flex justify-between items-center mb-8">
               <h2 className="text-2xl font-medium flex items-center gap-3">
@@ -95,13 +111,9 @@ export default function TherapistDashboard() {
               ))}
             </div>
 
-            {selectedDate && (
-              <div className="mt-8 bg-[#0F172A] p-6 rounded-2xl">
-                <p className="text-[#14B8A6] font-medium">Hai selezionato: {selectedDate}</p>
-                <p className="text-sm text-gray-400 mt-2">Clicca qui per impostare gli orari disponibili per questo giorno</p>
-                <Button className="mt-4 w-full bg-[#14B8A6]">Imposta orari per questo giorno</Button>
-              </div>
-            )}
+            <p className="text-center text-xs text-gray-400 mt-8">
+              Clicca sui giorni per impostare le tue fasce orarie disponibili
+            </p>
           </div>
 
           {/* Prenotazioni da confermare */}
@@ -135,6 +147,38 @@ export default function TherapistDashboard() {
           </div>
         </div>
       </div>
+
+      {/* Modal per inserire orario */}
+      {showTimeModal && selectedDate && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+          <div className="bg-[#1E2937] rounded-3xl p-10 w-full max-w-md">
+            <h3 className="text-2xl font-medium mb-6">Imposta orari per {selectedDate}</h3>
+
+            <Input
+              type="time"
+              value={selectedTimeSlot}
+              onChange={(e) => setSelectedTimeSlot(e.target.value)}
+              className="bg-[#0F172A] text-2xl mb-6 border-gray-700 text-white"
+            />
+
+            <div className="flex gap-4">
+              <Button
+                variant="outline"
+                onClick={() => setShowTimeModal(false)}
+                className="flex-1 py-6"
+              >
+                Annulla
+              </Button>
+              <Button
+                onClick={saveTimeSlot}
+                className="flex-1 py-6 bg-[#14B8A6]"
+              >
+                Salva Orario
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
