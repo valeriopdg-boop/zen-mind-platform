@@ -2,6 +2,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Calendar as CalendarIcon, Clock } from 'lucide-react';
 
@@ -14,6 +15,7 @@ export default function TherapistDashboard() {
   const [pendingBookings, setPendingBookings] = useState<any[]>([]);
   const [currentMonth, setCurrentMonth] = useState(new Date(2026, 2, 1)); // Marzo 2026
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     loadPendingBookings();
@@ -53,7 +55,7 @@ export default function TherapistDashboard() {
             <h1 className="text-4xl font-medium">Ciao, Dott.ssa Rossi 👋</h1>
             <p className="text-[#64748B]">Dashboard Terapeuta • Zen Mind</p>
           </div>
-          <Button className="bg-[#14B8A6]">Modifica Profilo</Button>
+          <Button className="bg-[#14B8A6]" onClick={() => router.push('/profile')}>Modifica Profilo e Disponibilità</Button>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
