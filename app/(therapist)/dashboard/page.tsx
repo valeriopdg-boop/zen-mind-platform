@@ -72,7 +72,7 @@ export default function TherapistDashboard() {
               variant="outline"
               onClick={async () => {
                 await supabase.auth.signOut();
-                window.location.href = '/login';
+                window.location.href = '/';
               }}
             >
               Esci

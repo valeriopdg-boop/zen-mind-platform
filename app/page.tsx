@@ -1,11 +1,45 @@
 // app/page.tsx
 'use client';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, CheckCircle, Users, Award } from 'lucide-react';
+import { CheckCircle, Users, Award } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
 export default function HomePage() {
   const router = useRouter();
+
+  const loginAsPatient = async () => {
+    try {
+      const { error } = await supabase.auth.signInAnonymously();
+      if (error) throw error;
+    } catch (e: any) {
+      console.error('Auth error:', e);
+      const msg = e?.message ?? String(e);
+      if (msg.includes('fetch') || msg.includes('Anonymous') || msg.includes('network')) {
+        alert('Auth non disponibile. Verifica .env e Supabase → Auth → abilita "Anonymous sign-ins".');
+      }
+    }
+    router.push('/test');
+  };
+
+  const loginAsTherapist = async () => {
+    try {
+      const { error } = await supabase.auth.signInAnonymously();
+      if (error) throw error;
+    } catch (e: any) {
+      console.error('Auth error:', e);
+      const msg = e?.message ?? String(e);
+      if (msg.includes('fetch') || msg.includes('Anonymous') || msg.includes('network')) {
+        alert('Auth non disponibile. Verifica .env e Supabase → Auth → abilita "Anonymous sign-ins".');
+      }
+    }
+    router.push('/dashboard');
+  };
 
   return (
     <div className="min-h-screen bg-[#0A0F1C] text-white">
@@ -16,25 +50,33 @@ export default function HomePage() {
             <div className="w-10 h-10 bg-gradient-to-br from-[#14B8A6] to-[#0F766E] rounded-2xl flex items-center justify-center text-3xl font-bold">Z</div>
             <span className="text-3xl font-semibold tracking-tight">Zen Mind</span>
           </div>
-          <Button onClick={() => router.push('/login')} className="button-primary px-8 py-6 text-lg rounded-2xl">
+          <a href="#hero" className="button-primary px-8 py-6 text-lg rounded-2xl inline-block">
             Inizia ora
-          </Button>
+          </a>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-24 bg-gradient-to-br from-[#0A0F1C] via-[#0F172A] to-[#0A0F1C]">
+      <section id="hero" className="pt-32 pb-24 bg-gradient-to-br from-[#0A0F1C] via-[#0F172A] to-[#0A0F1C]">
         <div className="max-w-5xl mx-auto text-center px-6">
           <h1 className="text-7xl font-medium leading-none mb-8 tracking-tighter">
             Trova il terapeuta<br />giusto per te.
           </h1>
-          <Button
-            onClick={() => router.push('/login')}
-            className="button-primary text-2xl px-16 py-8 rounded-3xl font-medium shadow-2xl shadow-[#14B8A6]/30"
-          >
-            Inizia il test ora
-            <ArrowRight className="ml-4" />
-          </Button>
+          <p className="text-xl text-white/70 mb-10">Scegli come entrare</p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button
+              onClick={loginAsPatient}
+              className="button-primary text-xl px-12 py-7 rounded-2xl font-medium shadow-xl shadow-[#14B8A6]/20"
+            >
+              👤 Entra come PAZIENTE
+            </Button>
+            <Button
+              onClick={loginAsTherapist}
+              className="button-primary text-xl px-12 py-7 rounded-2xl font-medium shadow-xl shadow-[#14B8A6]/20 border border-[#14B8A6]/50"
+            >
+              🧠 Entra come TERAPEUTA
+            </Button>
+          </div>
         </div>
       </section>
 
