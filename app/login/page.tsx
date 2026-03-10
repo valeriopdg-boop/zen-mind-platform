@@ -13,13 +13,31 @@ export default function LoginPage() {
   const router = useRouter();
 
   const loginAsPatient = async () => {
-    await supabase.auth.signInAnonymously();
-    router.push('/test'); // ← OK
+    try {
+      const { error } = await supabase.auth.signInAnonymously();
+      if (error) throw error;
+    } catch (e: any) {
+      console.error('Auth error:', e);
+      const msg = e?.message ?? String(e);
+      if (msg.includes('fetch') || msg.includes('Anonymous') || msg.includes('network')) {
+        alert('Auth non disponibile. Verifica: 1) .env con NEXT_PUBLIC_SUPABASE_URL e ANON_KEY 2) Supabase Dashboard → Auth → Providers → abilita "Anonymous sign-ins".');
+      }
+    }
+    router.push('/test');
   };
 
   const loginAsTherapist = async () => {
-    await supabase.auth.signInAnonymously();
-    router.push('/dashboard'); // ← CAMBIATO QUI (senza /therapist)
+    try {
+      const { error } = await supabase.auth.signInAnonymously();
+      if (error) throw error;
+    } catch (e: any) {
+      console.error('Auth error:', e);
+      const msg = e?.message ?? String(e);
+      if (msg.includes('fetch') || msg.includes('Anonymous') || msg.includes('network')) {
+        alert('Auth non disponibile. Verifica: 1) .env con NEXT_PUBLIC_SUPABASE_URL e ANON_KEY 2) Supabase Dashboard → Auth → Providers → abilita "Anonymous sign-ins".');
+      }
+    }
+    router.push('/dashboard');
   };
 
   return (
