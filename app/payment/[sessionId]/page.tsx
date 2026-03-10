@@ -19,10 +19,7 @@ export default function PaymentPage() {
     const loadSession = async () => {
       const { data } = await supabase
         .from('sessions')
-        .select(`
-          *,
-          therapist:therapists(hourly_rate, full_name)
-        `)
+        .select('*, therapist:therapists(hourly_rate, full_name)')
         .eq('id', sessionId)
         .single();
 
@@ -32,33 +29,19 @@ export default function PaymentPage() {
     loadSession();
   }, [sessionId]);
 
-  const handlePayment = async () => {
+  const handleRevolutPayment = () => {
     if (!session) return;
 
-    const totalAmount = session.therapist.hourly_rate * 100; // centesimi
+    const totalAmount = session.therapist.hourly_rate;
 
-    const response = await fetch('/api/create-checkout-session', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        sessionId: session.id,
-        amount: totalAmount,
-        therapistPrice: session.therapist.hourly_rate
-      })
-    });
+    // Revolut Payment Link (da sostituire con il tuo link dinamico in futuro)
+    const revolutLink = `https://revolut.me/zenmind/${sessionId}?amount=${totalAmount}`;
 
-    const data = await response.json();
-    if (!response.ok) {
-      alert(data.error ?? 'Errore creazione pagamento');
-      return;
-    }
-    if (data.url) {
-      window.location.href = data.url;
-    }
+    window.location.href = revolutLink;
   };
 
   if (loading || !session) {
-    return <div className="min-h-screen flex items-center justify-center text-2xl">Caricamento pagamento...</div>;
+    return <div className="min-h-screen flex items-center justify-center text-2xl bg-[#0A0F1C] text-white">Caricamento...</div>;
   }
 
   const price = session.therapist.hourly_rate;
@@ -66,7 +49,7 @@ export default function PaymentPage() {
   return (
     <div className="min-h-screen bg-[#0A0F1C] text-white flex items-center justify-center p-6">
       <div className="bg-[#1E2937] rounded-3xl shadow-2xl p-10 max-w-md w-full">
-        <h1 className="text-3xl font-medium text-center mb-6">Pagamento Sessione</h1>
+        <h1 className="text-3xl font-medium text-center mb-8">Pagamento Sessione</h1>
 
         <div className="bg-[#0F172A] p-8 rounded-2xl mb-8 text-center">
           <p className="text-gray-400">Terapeuta</p>
@@ -81,14 +64,14 @@ export default function PaymentPage() {
         </div>
 
         <Button
-          onClick={handlePayment}
+          onClick={handleRevolutPayment}
           className="w-full py-8 text-xl bg-[#14B8A6] hover:bg-[#0F766E]"
         >
-          Paga €{price} e conferma la prenotazione
+          Paga €{price} con Revolut
         </Button>
 
         <p className="text-xs text-center text-gray-500 mt-8">
-          Pagamento sicuro • Stripe • GDPR compliant
+          Pagamento sicuro • Revolut • Soldi al terapeuta in poche ore
         </p>
       </div>
     </div>
