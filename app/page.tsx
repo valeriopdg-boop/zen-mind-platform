@@ -3,9 +3,25 @@
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
 export default function HomePage() {
   const router = useRouter();
+
+  const loginAsPatient = async () => {
+    await supabase.auth.signInAnonymously();
+    router.push('/test');
+  };
+
+  const loginAsTherapist = async () => {
+    await supabase.auth.signInAnonymously();
+    router.push('/dashboard');
+  };
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] overflow-hidden">
@@ -20,39 +36,30 @@ export default function HomePage() {
         </div>
       </nav>
 
-      {/* Hero */}
-      <section className="pt-32 pb-20 bg-gradient-to-br from-[#0F766E] to-[#14B8A6] text-white">
+      {/* Hero + scelta paziente/terapeuta */}
+      <section className="pt-32 pb-24 bg-gradient-to-br from-[#0F766E] to-[#14B8A6] text-white">
         <div className="max-w-4xl mx-auto text-center px-6">
           <h1 className="text-6xl font-medium leading-tight mb-6">
             Non cercare uno psicologo.<br />
             <span className="text-[#F8FAFC]">Trova quello giusto per te.</span>
           </h1>
           <p className="text-2xl text-white/90 mb-10 max-w-2xl mx-auto">
-            20 domande scientifiche • Matching al 90%+ • Solo 10€ a Zen Mind
+            20 domande scientifiche, ti condurranno al terapeuta giusto per te
           </p>
-          <Button 
-            onClick={() => router.push('/login')}
-            className="bg-white text-[#0F766E] hover:bg-white/90 text-xl px-12 py-8 rounded-2xl font-medium"
-          >
-            Inizia il test gratuito di 6 minuti
-            <ArrowRight className="ml-3" />
-          </Button>
-        </div>
-      </section>
-
-      {/* How it works + altre sezioni rimangono uguali */}
-      {/* (le altre sezioni sono già perfette, le ho lasciate invariate) */}
-
-      {/* CTA finale */}
-      <section className="py-20 bg-[#0F766E] text-white text-center">
-        <div className="max-w-2xl mx-auto px-6">
-          <h2 className="text-5xl font-medium mb-6">Pronto a trovare la tua mente complementare?</h2>
-          <Button 
-            onClick={() => router.push('/login')}
-            className="bg-white text-[#0F766E] text-2xl px-16 py-8 rounded-2xl mt-8"
-          >
-            Inizia ora il test
-          </Button>
+          <div className="space-y-4 max-w-md mx-auto">
+            <Button 
+              onClick={loginAsPatient}
+              className="w-full py-7 text-xl bg-white text-black hover:bg-white/90 rounded-2xl font-medium"
+            >
+              👤 Entra come PAZIENTE
+            </Button>
+            <Button 
+              onClick={loginAsTherapist}
+              className="w-full py-7 text-xl bg-[#0F766E] hover:bg-[#0F766E]/90 rounded-2xl font-medium"
+            >
+              🧠 Entra come TERAPEUTA
+            </Button>
+          </div>
         </div>
       </section>
     </div>
