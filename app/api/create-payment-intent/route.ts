@@ -1,10 +1,10 @@
 // app/api/create-payment-intent/route.ts
 import { createClient } from '@supabase/supabase-js';
-import Stripe from 'stripe';
 
-function getStripe() {
+async function getStripe() {
   const key = process.env.STRIPE_SECRET_KEY;
   if (!key) throw new Error('STRIPE_SECRET_KEY non configurata');
+  const Stripe = (await import('stripe')).default;
   return new Stripe(key);
 }
 
@@ -19,7 +19,8 @@ export async function POST(request: Request) {
   try {
     const { sessionId, amount, therapistPrice } = await request.json();
 
-    const paymentIntent = await getStripe().paymentIntents.create({
+    const stripe = await getStripe();
+    const paymentIntent = await stripe.paymentIntents.create({
       amount: amount,
       currency: 'eur',
       metadata: {
