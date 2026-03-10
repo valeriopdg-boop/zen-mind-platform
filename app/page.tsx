@@ -44,7 +44,7 @@ export default function HomePage() {
             <span className="text-[#F8FAFC]">Trova quello giusto per te.</span>
           </h1>
           <p className="text-2xl text-white/90 mb-10 max-w-2xl mx-auto">
-            20 domande scientifiche, ti condurranno al terapeuta giusto per te
+            10 domande scientifiche, ti condurranno al terapeuta giusto per te
           </p>
           <div className="space-y-4 max-w-md mx-auto">
             <Button 

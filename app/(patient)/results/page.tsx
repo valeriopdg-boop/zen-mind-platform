@@ -62,7 +62,7 @@ export default function ResultsPage() {
     <div className="min-h-screen bg-[#F8FAFC] py-12">
       <div className="max-w-4xl mx-auto px-6">
         <h1 className="text-4xl font-medium text-center mb-4 text-[#0F766E]">I tuoi match perfetti</h1>
-        <p className="text-center text-[#64748B] mb-12">Basati sul tuo test di 20 domande</p>
+        <p className="text-center text-[#64748B] mb-12">Basati sul tuo test di 10 domande</p>
 
         {matches.length === 0 ? (
           <div className="text-center py-12">
