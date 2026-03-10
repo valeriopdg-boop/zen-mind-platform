@@ -1,23 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
-import Stripe from 'stripe';
 
 export const dynamic = 'force-dynamic';
 
-function getStripe() {
-  const key = process.env.STRIPE_SECRET_KEY;
-  if (!key) throw new Error('STRIPE_SECRET_KEY non configurata');
-  return new Stripe(key);
-}
-
 export async function POST(request: NextRequest) {
   try {
+    const key = process.env.STRIPE_SECRET_KEY;
+    if (!key) {
+      return NextResponse.json({ error: 'STRIPE_SECRET_KEY non configurata' }, { status: 500 });
+    }
+
     const { sessionId, amount, therapistPrice } = await request.json();
     if (!sessionId || amount == null) {
       return NextResponse.json({ error: 'sessionId e amount richiesti' }, { status: 400 });
     }
 
+    const Stripe = (await import('stripe')).default;
+    const stripe = new Stripe(key);
+
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? request.nextUrl.origin;
-    const stripe = getStripe();
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
             product_data: {
               name: 'Sessione di psicoterapia',
               description: `Seduta 50 min - Tariffa terapeuta €${therapistPrice ?? amount / 100}`,
-              images: []
+              images: [],
             },
             unit_amount: typeof amount === 'number' ? amount : Math.round(Number(amount)),
           },
