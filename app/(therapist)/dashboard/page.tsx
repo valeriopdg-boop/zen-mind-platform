@@ -50,14 +50,9 @@ export default function TherapistDashboard() {
     loadDashboardData();
   };
 
-  const toggleDayAvailability = (day: number) => {
+  const toggleDay = (day: number) => {
     const dateStr = `2026-03-${day.toString().padStart(2, '0')}`;
-    if (selectedDate === dateStr) {
-      setSelectedDate(null);
-    } else {
-      setSelectedDate(dateStr);
-      alert(`📅 Disponibilità attivata per il ${day} marzo 2026\n\nOra puoi impostare gli orari (prossimo step)`);
-    }
+    setSelectedDate(selectedDate === dateStr ? null : dateStr);
   };
 
   return (
@@ -72,15 +67,13 @@ export default function TherapistDashboard() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* Calendario Interattivo */}
+          {/* Calendario Interattivo Avanzato */}
           <div className="lg:col-span-7 bg-[#1E2937] rounded-3xl p-8">
             <div className="flex justify-between items-center mb-8">
               <h2 className="text-2xl font-medium flex items-center gap-3">
                 <CalendarIcon className="text-[#14B8A6]" /> Marzo 2026
               </h2>
-              <Button variant="outline" onClick={() => alert("Gestione orario settimanale in arrivo")}>
-                Gestisci orario settimanale
-              </Button>
+              <Button variant="outline">Gestisci orario settimanale</Button>
             </div>
 
             <div className="grid grid-cols-7 gap-3 text-center">
@@ -91,20 +84,24 @@ export default function TherapistDashboard() {
               {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => (
                 <div
                   key={day}
-                  onClick={() => toggleDayAvailability(day)}
-                  className={`aspect-square flex items-center justify-center rounded-2xl text-lg font-medium cursor-pointer transition-all hover:bg-[#14B8A6]/20 border border-transparent
+                  onClick={() => toggleDay(day)}
+                  className={`aspect-square flex items-center justify-center rounded-2xl text-lg font-medium cursor-pointer transition-all border border-transparent
                     ${selectedDate === `2026-03-${day.toString().padStart(2, '0')}`
-                      ? 'bg-[#14B8A6] text-black border-[#14B8A6]'
-                      : 'bg-[#0F172A] hover:border-[#14B8A6]/50'}`}
+                      ? 'bg-[#14B8A6] text-black border-[#14B8A6] scale-110'
+                      : 'bg-[#0F172A] hover:bg-[#1E2937] hover:border-[#14B8A6]/50'}`}
                 >
                   {day}
                 </div>
               ))}
             </div>
 
-            <p className="text-center text-xs text-gray-400 mt-8">
-              Clicca sui giorni per impostare le tue fasce orarie disponibili
-            </p>
+            {selectedDate && (
+              <div className="mt-8 bg-[#0F172A] p-6 rounded-2xl">
+                <p className="text-[#14B8A6] font-medium">Hai selezionato: {selectedDate}</p>
+                <p className="text-sm text-gray-400 mt-2">Clicca qui per impostare gli orari disponibili per questo giorno</p>
+                <Button className="mt-4 w-full bg-[#14B8A6]">Imposta orari per questo giorno</Button>
+              </div>
+            )}
           </div>
 
           {/* Prenotazioni da confermare */}
