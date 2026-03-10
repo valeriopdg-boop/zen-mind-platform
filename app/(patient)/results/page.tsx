@@ -52,7 +52,7 @@ export default function ResultsPage() {
   };
 
   if (loading) {
-    return <div className="min-h-screen bg-[#0A0F1C] flex items-center justify-center text-white text-2xl">Calcolo i tuoi match...</div>;
+    return <div className="min-h-screen bg-[#0A0F1C] flex items-center justify-center text-white text-2xl">Calcolo i tuoi match migliori...</div>;
   }
 
   return (
