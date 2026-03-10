@@ -16,7 +16,7 @@ export const questions: Question[] = [
     weight: 28, dimension: "problem" },
 
   // 2. Intensità (12%)
-  { id: 2, block: "Problema", text: "Quanto è intenso questo problema in questo momento? (1 = leggero, 10 = molto grave)", type: "scale", weight: 12, dimension: "problem" },
+  { id: 2, block: "Problema", text: "Quanto è intenso questo problema in questo momento? (1 = leggero, 10 = molto grave)", type: "scale", options: ["1","2","3","4","5","6","7","8","9","10"], weight: 12, dimension: "problem" },
 
   // 3. Orientamento (20%)
   { id: 3, block: "Orientamento", text: "Quale approccio terapeutico ti attira di più?", type: "single",
@@ -29,7 +29,7 @@ export const questions: Question[] = [
     weight: 10, dimension: "style" },
 
   // 5. Empatia (8%)
-  { id: 5, block: "Relazione", text: "Quanto è importante per te che il terapeuta sia empatico e caldo?", type: "scale", weight: 8, dimension: "style" },
+  { id: 5, block: "Relazione", text: "Quanto è importante per te che il terapeuta sia empatico e caldo?", type: "scale", options: ["1","2","3","4","5","6","7","8","9","10"], weight: 8, dimension: "style" },
 
   // 6. Genere (7%)
   { id: 6, block: "Preferenze", text: "Hai una preferenza sul genere del terapeuta?", type: "single",

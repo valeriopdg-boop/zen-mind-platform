@@ -1,6 +1,6 @@
 // components/TestQuestion.tsx
 'use client';
-import { questions } from '@/lib/questions';
+import { questions, type Question } from '@/lib/questions';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { ArrowLeft } from 'lucide-react';
@@ -47,15 +47,15 @@ export default function TestQuestion({
         </h2>
 
         {/* Risposte */}
-        <div className={q.type === 'scale' ? 'flex gap-4 justify-center flex-wrap' : 'space-y-4'}>
-          {(q.type === 'scale' ? [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] : q.options ?? []).map((opt, i) => (
+        <div className="space-y-4">
+          {q.options?.map((opt, i) => (
             <button
               key={i}
               onClick={() => onAnswer(q.id, q.type === 'scale' ? Number(opt) : opt)}
-              className={`transition-all text-lg
-                ${q.type === 'scale'
-                  ? `w-14 h-14 rounded-2xl border text-2xl font-medium ${answers[q.id] === opt ? 'border-[#14B8A6] bg-[#14B8A6]/10 text-white scale-110' : 'border-[#1E2937] hover:border-[#14B8A6]/50 bg-[#0F172A]'}`
-                  : `w-full p-6 rounded-3xl border-2 text-left ${answers[q.id] === opt ? 'border-[#14B8A6] bg-[#14B8A6]/10 text-white' : 'border-[#1E2937] hover:border-[#14B8A6]/50 bg-[#0F172A]'}`
+              className={`w-full p-6 rounded-3xl border text-left transition-all text-lg
+                ${answers[q.id] === (q.type === 'scale' ? Number(opt) : opt)
+                  ? 'border-[#14B8A6] bg-[#14B8A6]/10 text-white'
+                  : 'border-[#1E2937] hover:border-[#14B8A6]/50 bg-[#0F172A]'
                 }`}
             >
               {opt}
