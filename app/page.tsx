@@ -24,7 +24,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] overflow-hidden">
+    <div className="h-screen bg-[#F8FAFC] overflow-hidden flex flex-col">
       {/* Navbar */}
       <nav className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-md z-50 border-b">
         <div className="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
@@ -37,7 +37,7 @@ export default function HomePage() {
       </nav>
 
       {/* Hero + scelta paziente/terapeuta */}
-      <section className="pt-32 pb-24 bg-gradient-to-br from-[#0F766E] to-[#14B8A6] text-white">
+      <section className="flex-1 flex items-center pt-32 pb-24 bg-gradient-to-br from-[#0F766E] to-[#14B8A6] text-white">
         <div className="max-w-4xl mx-auto text-center px-6">
           <h1 className="text-6xl font-medium leading-tight mb-6">
             Non cercare uno psicologo.<br />
@@ -49,7 +49,7 @@ export default function HomePage() {
           <div className="space-y-4 max-w-md mx-auto">
             <Button 
               onClick={loginAsPatient}
-              className="w-full py-7 text-xl bg-white text-black hover:bg-white/90 rounded-2xl font-medium"
+              className="w-full py-7 text-xl bg-[#0F766E] text-white hover:bg-[#0F766E]/90 rounded-2xl font-medium"
             >
               👤 Entra come PAZIENTE
             </Button>
