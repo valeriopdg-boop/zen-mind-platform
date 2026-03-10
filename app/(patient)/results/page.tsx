@@ -12,9 +12,9 @@ const supabase = createClient(
 );
 
 const fakeTherapists = [
-  { id: '00000000-0000-0000-0000-000000000001', full_name: "Dott.ssa Elena Rossi", hourly_rate: 65, orientations: ["CBT", "Schema Therapy"], specialties: ["Ansia", "Autostima"] },
-  { id: '00000000-0000-0000-0000-000000000002', full_name: "Dott. Marco Bianchi", hourly_rate: 70, orientations: ["EMDR"], specialties: ["Traumi"] },
-  { id: '00000000-0000-0000-0000-000000000003', full_name: "Dott.ssa Giulia Verdi", hourly_rate: 58, orientations: ["Psicodinamica"], specialties: ["Relazioni"] },
+  { id: '00000000-0000-0000-0000-000000000001', full_name: "Dott.ssa Elena Rossi", hourly_rate: 65 },
+  { id: '00000000-0000-0000-0000-000000000002', full_name: "Dott. Marco Bianchi", hourly_rate: 70 },
+  { id: '00000000-0000-0000-0000-000000000003', full_name: "Dott.ssa Giulia Verdi", hourly_rate: 58 },
 ];
 
 export default function ResultsPage() {
@@ -47,11 +47,11 @@ export default function ResultsPage() {
     loadResults();
   }, []);
 
-  const startBooking = (therapistId: string) => {
+  const goToBooking = (therapistId: string) => {
     router.push(`/book/${therapistId}`);
   };
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center text-2xl bg-[#0A0F1C] text-white">Calcolo i tuoi match...</div>;
+  if (loading) return <div className="min-h-screen bg-[#0A0F1C] flex items-center justify-center text-white text-2xl">Calcolo i tuoi match migliori...</div>;
 
   return (
     <div className="min-h-screen bg-[#0A0F1C] text-white py-12">
@@ -72,7 +72,7 @@ export default function ResultsPage() {
               </ul>
 
               <Button
-                onClick={() => startBooking(m.id)}
+                onClick={() => goToBooking(m.id)}
                 className="w-full py-7 text-lg bg-[#14B8A6] hover:bg-[#0F766E]"
               >
                 Prenota con {m.full_name.split(' ')[1]} — €{m.hourly_rate}
